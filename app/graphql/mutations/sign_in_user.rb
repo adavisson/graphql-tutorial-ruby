@@ -2,7 +2,7 @@ module Mutations
   class SignInUser < BaseMutation
     null true
 
-    argument :credentials, Types::AuthProviderCredentialsInputObject, required: false
+    argument :credentials, Types::AuthProviderCredentialsInput, required: false
 
     field :token, String, null: true
     field :user, Types::UserType, null: true
@@ -20,7 +20,7 @@ module Mutations
       token = crypt.encrypt_and_sign("user-id:#{ user.id }")
 
       {
-        user: user
+        user: user,
         token: token
       }
     end
