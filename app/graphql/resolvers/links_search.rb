@@ -1,7 +1,7 @@
 require 'search_object'
-require 'search_object/plugins/graphql'
+require 'search_object/plugin/graphql'
 
-class Resolvers::LinkSearch
+class Resolvers::LinksSearch
   # include search object for graphql
   include SearchObject.module(:graphql)
 
@@ -18,12 +18,12 @@ class Resolvers::LinkSearch
   end
 
   # when "filter" is passed "apply_filter" would be called to narrow the scope
-  option :filter, type: LinkFilter, with: apply_filter
+  option :filter, type: LinkFilter, with: :apply_filter
 
   # apply_filter recursively loops through "OR" branches
-  def apply_filter
+  def apply_filter(scope, value)
     branches = normalize_filters(value).reduce { |a, b| a.or(b) }
-    scope.merge(branches)
+    scope.merge branches
   end
 
   def normalize_filters(value, branches = [])
@@ -33,7 +33,7 @@ class Resolvers::LinkSearch
 
     branches << scope
 
-    value[:OR].reduce(branches) { |s, v| normalize_filters(f, s) } if value[:OR].present?
+    value[:OR].reduce(branches) { |s, v| normalize_filters(v, s) } if value[:OR].present?
 
     branches
   end
