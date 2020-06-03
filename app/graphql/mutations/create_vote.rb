@@ -6,7 +6,7 @@ module Mutations
 
     def resolve(link_id: nil)
       Vote.create!(
-        link: link.find(link_id),
+        link: Link.find(link_id),
         user: context[:current_user]
       )
     end
